@@ -56,32 +56,11 @@ defmodule Aoc20.Day1 do
   end
 
   def find_entries(list) do
-    Enum.reduce_while(list, 0, fn x, _x_acc ->
-      rs =
-        Enum.reduce_while(list, 0, fn y, _acc ->
-          result =
-            Enum.reduce_while(list, 0, fn z, _acc ->
-              if x + y + z == 2020 do
-                IO.puts("#{x} #{y} #{z} ")
-                IO.puts("#{x * y * z}")
-                {:halt, x * y * z}
-              else
-                {:cont, 0}
-              end
-            end)
+    for(x <- list, y <- list, z <- list, check_combination?(x, y, z), do: x * y * z)
+    |> List.first()
+  end
 
-          if result != 0 do
-            {:halt, result}
-          else
-            {:cont, 0}
-          end
-        end)
-
-      if rs != 0 do
-        {:halt, rs}
-      else
-        {:cont, 0}
-      end
-    end)
+  def check_combination?(x, y, z) do
+    x + y + z == 2020
   end
 end
