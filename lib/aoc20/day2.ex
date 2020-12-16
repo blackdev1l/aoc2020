@@ -20,10 +20,10 @@ defmodule Aoc20.Day2 do
   How many passwords are valid according to their policies?
   """
 
-  def read(passwords) do
+  def read(passwords, policy_type) do
     passwords
     |> Enum.map(&parse/1)
-    |> Enum.filter(&checkPolicy/1)
+    |> Enum.filter(&check_policy(&1, policy_type))
     |> Enum.count()
   end
 
@@ -34,12 +34,21 @@ defmodule Aoc20.Day2 do
     )
   end
 
-  def checkPolicy(policy) do
-    count =
-      String.splitter(policy["password"], "")
-      |> Enum.filter(&(&1 == policy["letter"]))
-      |> Enum.count()
+  def check_policy(policy, policy_type) do
+    password = policy["password"]
+    min = String.to_integer(policy["min"])
+    max = String.to_integer(policy["max"])
+    letter = policy["letter"]
 
-    count >= String.to_integer(policy["min"]) && count <= String.to_integer(policy["max"])
+    if policy_type == :old_policy do
+      count =
+        String.splitter(password, "")
+        |> Enum.filter(&(&1 == letter))
+        |> Enum.count()
+
+      count >= min && count <= max
+    else
+      !(String.at(password, min - 1) == letter == (String.at(password, max - 1) == letter))
+    end
   end
 end
